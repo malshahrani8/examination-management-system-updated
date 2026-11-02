@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}دخول المسؤول{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="main-container">
+        <div class="text-center">
+            <i class="fas fa-shield-alt" style="font-size: 80px; color: var(--tvtc-green);"></i>
+            <h2 class="page-title mt-3">دخول المسؤول</h2>
+            <p class="text-muted">نظام إدارة تسجيل الاختبارات</p>
+        </div>
+
+        <form method="POST" class="mt-4">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-user ms-1"></i> اسم المستخدم
+                </label>
+                <input type="text" class="form-control" name="username" required>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-lock ms-1"></i> كلمة المرور
+                </label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-tvtc w-100 btn-lg">
+                <i class="fas fa-sign-in-alt ms-2"></i> تسجيل الدخول
+            </button>
+        </form>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="text-muted">
+                <i class="fas fa-arrow-right ms-1"></i> العودة لصفحة التسجيل
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

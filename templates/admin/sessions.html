@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}إدارة الجلسات{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h1 class="page-title mb-0">
+            <i class="fas fa-calendar-alt"></i> إدارة الجلسات
+        </h1>
+        <a href="{{ url_for('admin_session_new') }}" class="btn btn-modern">
+            <i class="fas fa-plus ms-2"></i> إضافة جلسة
+        </a>
+    </div>
+
+    <div class="card card-modern">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>المقرر</th>
+                            <th>التخصص</th>
+                            <th>التاريخ</th>
+                            <th>الوقت</th>
+                            <th>المعمل</th>
+                            <th>المسجلون</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                        <tr>
+                            <td>{{ session.id }}</td>
+                            <td>{{ session.course_name }}</td>
+                            <td>{{ session.specialization }}</td>
+                            <td>{{ session.session_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ session.session_time.strftime('%H:%M') }}</td>
+                            <td><i class="fas fa-map-marker-alt text-muted"></i> {{ session.location }}</td>
+                            <td>{{ session.current_count }} / {{ session.max_capacity }}</td>
+                            <td>{{ session.status_badge | safe }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_session_attendance', session_id=session.id) }}" 
+                                   class="btn btn-sm btn-modern-success" title="تسجيل الحضور">
+                                    <i class="fas fa-clipboard-check"></i>
+                                </a>
+                                <a href="{{ url_for('admin_session_grades', session_id=session.id) }}" 
+                                   class="btn btn-sm btn-modern-warning" title="رصد الدرجات">
+                                    <i class="fas fa-star"></i>
+                                </a>
+                                <a href="{{ url_for('admin_session_edit', session_id=session.id) }}" 
+                                   class="btn btn-sm btn-modern-outline" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('admin_session_delete', session_id=session.id) }}" 
+                                      style="display: inline;"
+                                      onsubmit="return confirm('⚠️ سيتم حذف الجلسة وجميع المتدربين المسجلين فيها. هل أنت متأكد؟');">
+                                    <button type="submit" class="btn btn-sm btn-modern-danger" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

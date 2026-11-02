@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="main-container" style="max-width: 800px; margin: 30px auto;">
+    <h1 class="page-title">
+        <i class="fas fa-calendar-plus"></i> {{ title }}
+    </h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="card card-modern">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i> معلومات الجلسة
+            </div>
+            <div class="card-body">
+                <!-- المقرر -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-book text-primary ms-1"></i> المقرر *
+                    </label>
+                    <select name="course_name" class="form-select" required>
+                        <option value="">-- اختر المقرر --</option>
+                        <option value="مقدمة تطبيقات الحاسب" {% if form.course_name.data == 'مقدمة تطبيقات الحاسب' %}selected{% endif %}>مقدمة تطبيقات الحاسب</option>
+                        <option value="أساسيات ريادة الأعمال" {% if form.course_name.data == 'أساسيات ريادة الأعمال' %}selected{% endif %}>أساسيات ريادة الأعمال</option>
+                        <option value="السلوك الوظيفي" {% if form.course_name.data == 'السلوك الوظيفي' %}selected{% endif %}>السلوك الوظيفي</option>
+                        <option value="أخرى" {% if form.course_name.data == 'أخرى' %}selected{% endif %}>أخرى</option>
+                    </select>
+                </div>
+                
+                <!-- التخصص -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-graduation-cap text-primary ms-1"></i> التخصص *
+                    </label>
+                    <select name="specialization" class="form-select" required>
+                        <option value="">-- اختر التخصص --</option>
+                        <option value="تقنية الدعم الفني للحاسب" {% if form.specialization.data == 'تقنية الدعم الفني للحاسب' %}selected{% endif %}>تقنية الدعم الفني للحاسب</option>
+                        <option value="تقنية شبكات الحاسب" {% if form.specialization.data == 'تقنية شبكات الحاسب' %}selected{% endif %}>تقنية شبكات الحاسب</option>
+                        <option value="تقنيات الأعمال المكتبية" {% if form.specialization.data == 'تقنيات الأعمال المكتبية' %}selected{% endif %}>تقنيات الأعمال المكتبية</option>
+                        <option value="تقنيات محاسبية" {% if form.specialization.data == 'تقنيات محاسبية' %}selected{% endif %}>تقنيات محاسبية</option>
+                        <option value="تقنية المحركات والمركبات" {% if form.specialization.data == 'تقنية المحركات والمركبات' %}selected{% endif %}>تقنية المحركات والمركبات</option>
+                        <option value="تقنية الإلكترونيات وأنظمة التحكم" {% if form.specialization.data == 'تقنية الإلكترونيات وأنظمة التحكم' %}selected{% endif %}>تقنية الإلكترونيات وأنظمة التحكم</option>
+                    </select>
+                </div>
+                
+                <!-- التاريخ والوقت -->
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-calendar-day text-primary ms-1"></i> تاريخ الجلسة *
+                        </label>
+                        <input type="date" name="session_date" class="form-control" 
+                               value="{{ form.session_date.data.strftime('%Y-%m-%d') if form.session_date.data else '' }}" required>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-clock text-primary ms-1"></i> وقت الجلسة *
+                        </label>
+                        <input type="time" name="session_time" class="form-control" 
+                               value="{{ form.session_time.data.strftime('%H:%M') if form.session_time.data else '' }}" required>
+                    </div>
+                </div>
+                
+                <!-- ✅ المعمل (قائمة منسدلة) -->
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt text-primary ms-1"></i> المعمل / مكان الجلسة *
+                        </label>
+                        <select name="location" class="form-select" required>
+                            <option value="">-- اختر المعمل --</option>
+                            <option value="معمل 102 - مبنى ب" {% if form.location.data == 'معمل 102 - مبنى ب' %}selected{% endif %}>معمل 102 - مبنى ب</option>
+                            <option value="معمل 106 - مبنى ب" {% if form.location.data == 'معمل 106 - مبنى ب' %}selected{% endif %}>معمل 106 - مبنى ب</option>
+                            <option value="معمل 107 - مبنى ب" {% if form.location.data == 'معمل 107 - مبنى ب' %}selected{% endif %}>معمل 107 - مبنى ب</option>
+                            <option value="معمل 108 - مبنى ب" {% if form.location.data == 'معمل 108 - مبنى ب' %}selected{% endif %}>معمل 108 - مبنى ب</option>
+                            <option value="معمل 109 - مبنى ب" {% if form.location.data == 'معمل 109 - مبنى ب' %}selected{% endif %}>معمل 109 - مبنى ب</option>
+                            <option value="معمل 111 - مبنى ب" {% if form.location.data == 'معمل 111 - مبنى ب' %}selected{% endif %}>معمل 111 - مبنى ب</option>
+                            <option value="معمل 201 - مبنى ب" {% if form.location.data == 'معمل 201 - مبنى ب' %}selected{% endif %}>معمل 201 - مبنى ب</option>
+                            <option value="معمل 202 - مبنى ب" {% if form.location.data == 'معمل 202 - مبنى ب' %}selected{% endif %}>معمل 202 - مبنى ب</option>
+                            <option value="معمل 203 - مبنى ب" {% if form.location.data == 'معمل 203 - مبنى ب' %}selected{% endif %}>معمل 203 - مبنى ب</option>
+                            <option value="معمل 307 - مبنى ب" {% if form.location.data == 'معمل 307 - مبنى ب' %}selected{% endif %}>معمل 307 - مبنى ب</option>
+                            <option value="معمل 308 - مبنى ب" {% if form.location.data == 'معمل 308 - مبنى ب' %}selected{% endif %}>معمل 308 - مبنى ب</option>
+                            <option value="معمل 309 - مبنى ب" {% if form.location.data == 'معمل 309 - مبنى ب' %}selected{% endif %}>معمل 309 - مبنى ب</option>
+                            <option value="معمل 310 - مبنى ب" {% if form.location.data == 'معمل 310 - مبنى ب' %}selected{% endif %}>معمل 310 - مبنى ب</option>
+                            <option value="معمل 311 - مبنى ب" {% if form.location.data == 'معمل 311 - مبنى ب' %}selected{% endif %}>معمل 311 - مبنى ب</option>
+                            <option value="معمل 312 - مبنى ب" {% if form.location.data == 'معمل 312 - مبنى ب' %}selected{% endif %}>معمل 312 - مبنى ب</option>
+                            <option value="معمل 313 - مبنى ب" {% if form.location.data == 'معمل 313 - مبنى ب' %}selected{% endif %}>معمل 313 - مبنى ب</option>
+                            <option value="معمل 314 - مبنى ب" {% if form.location.data == 'معمل 314 - مبنى ب' %}selected{% endif %}>معمل 314 - مبنى ب</option>
+                            <option value="أخرى" {% if form.location.data == 'أخرى' %}selected{% endif %}>أخرى</option>
+                        </select>
+                        <small class="form-text">اختر المعمل المخصص للجلسة</small>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-users text-primary ms-1"></i> السعة القصوى *
+                        </label>
+                        <input type="number" name="max_capacity" class="form-control" 
+                               value="{{ form.max_capacity.data or 20 }}" 
+                               min="1" max="50" required>
+                    </div>
+                </div>
+                
+                <!-- الأزرار -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-modern">
+                        <i class="fas fa-save ms-2"></i> حفظ الجلسة
+                    </button>
+                    <a href="{{ url_for('admin_sessions') }}" class="btn btn-modern-outline">
+                        <i class="fas fa-times ms-2"></i> إلغاء
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

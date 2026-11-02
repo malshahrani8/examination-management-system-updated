@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}تم التسجيل بنجاح{% endblock %}
+
+{% block content %}
+<div class="main-container fade-in">
+    <div class="text-center">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1 class="page-title" style="border: none; text-align: center;">🎉 تم التسجيل بنجاح!</h1>
+        <div class="alert alert-success mt-4">
+            <h4 class="mb-3">مرحباً {{ trainee.full_name }} 👋</h4>
+            <p class="mb-0">تم تسجيلك في اختبار مقرر <strong>{{ session.course_name }}</strong></p>
+        </div>
+
+        <div class="card card-modern mt-4">
+            <div class="card-header"><i class="fas fa-file-invoice ms-2"></i> تفاصيل التسجيل</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-start">
+                        <p><i class="fas fa-id-card text-muted ms-2"></i> <strong>الرقم التدريبي:</strong> {{ trainee.trainee_id }}</p>
+                        <p><i class="fas fa-envelope text-muted ms-2"></i> <strong>البريد:</strong> {{ trainee.email or '-' }}</p>
+                        <p><i class="fas fa-mobile-alt text-muted ms-2"></i> <strong>الجوال:</strong> {{ trainee.phone or '-' }}</p>
+                        <p><i class="fas fa-graduation-cap text-muted ms-2"></i> <strong>التخصص:</strong> {{ trainee.specialization }}</p>
+                    </div>
+                    <div class="col-md-6 text-start">
+                        <p><i class="fas fa-calendar-day text-muted ms-2"></i> <strong>التاريخ:</strong> {{ session.session_date.strftime('%Y-%m-%d') }}</p>
+                        <p><i class="fas fa-clock text-muted ms-2"></i> <strong>الوقت:</strong> {{ session.session_time.strftime('%H:%M') }}</p>
+                        <p><i class="fas fa-map-marker-alt text-muted ms-2"></i> <strong>المعمل:</strong> {{ session.location }}</p>
+                        <p><i class="fas fa-layer-group text-muted ms-2"></i> <strong>المحاولة:</strong> {{ trainee.registration_order }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if email_sent %}
+        <div class="alert alert-info mt-3"><i class="fas fa-envelope-open-text ms-2"></i> تم إرسال تأكيد التسجيل</div>
+        {% else %}
+        <div class="alert alert-warning mt-3"><i class="fas fa-exclamation-triangle ms-2"></i> لم نتمكن من إرسال البريد</div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{{ url_for('print_acknowledgment', trainee_id=trainee.id) }}" class="btn btn-modern btn-lg me-2" target="_blank">
+                <i class="fas fa-print ms-2"></i> طباعة الإقرار
+            </a>
+            <button onclick="window.print()" class="btn btn-modern-outline btn-lg">
+                <i class="fas fa-file-pdf ms-2"></i> طباعة التفاصيل
+            </button>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-modern-outline"><i class="fas fa-home ms-2"></i> العودة</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

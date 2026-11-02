@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+
+{% block title %}التسجيل في الاختبار{% endblock %}
+
+{% block content %}
+<div class="main-container fade-in">
+    <div class="text-center mb-4">
+        <h1 class="page-title d-inline-block">
+            <i class="fas fa-user-plus"></i>
+            التسجيل في اختبار مقرر مقدمة تطبيقات الحاسب
+        </h1>
+        <p class="text-muted mt-2">يرجى إدخال الرقم التدريبي لتعبئة البيانات تلقائياً</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('register') }}" id="registrationForm">
+        {{ form.hidden_tag() }}
+        
+        <div class="card card-modern mb-4">
+            <div class="card-header">
+                <i class="fas fa-user"></i> البيانات الشخصية
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-id-card text-primary ms-1"></i> الرقم التدريبي *
+                        </label>
+                        <input type="text" class="form-control" name="trainee_id" id="trainee_id"
+                               pattern="[0-9]{6,10}" placeholder="أدخل الرقم التدريبي (6-10 أرقام)" required>
+                        <small class="form-text">سيتم تعبئة الاسم والتخصص تلقائياً</small>
+                        <div id="trainee-status" class="mt-2"></div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-user-tag text-primary ms-1"></i> الاسم الكامل *
+                            <span class="badge badge-info ms-1">تلقائي</span>
+                        </label>
+                        <input type="text" class="form-control auto-filled-field" name="full_name" id="full_name" readonly required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-mobile-alt text-primary ms-1"></i> رقم الجوال
+                            <span class="badge badge-light">اختياري</span>
+                        </label>
+                        <input type="tel" class="form-control" name="phone" id="phone"
+                               pattern="05[0-9]{8}" placeholder="05xxxxxxxx">
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-envelope text-primary ms-1"></i> البريد الإلكتروني
+                            <span class="badge badge-light">اختياري</span>
+                        </label>
+                        <input type="email" class="form-control" name="email" id="email">
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-graduation-cap text-primary ms-1"></i> التخصص *
+                            <span class="badge badge-info ms-1">تلقائي</span>
+                        </label>
+                        <input type="text" class="form-control auto-filled-field" 
+                               name="specialization" id="specialization"
+                               placeholder="سيتم تعبئته تلقائياً" readonly required>
+                        <small class="form-text">
+                            <i class="fas fa-info-circle"></i> يتم تعبئته تلقائياً من قاعدة البيانات
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-modern mb-4">
+            <div class="card-header">
+                <i class="fas fa-calendar-check"></i> اختر جلسة الاختبار
+            </div>
+            <div class="card-body">
+                <div id="sessionsContainer">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-info-circle fa-2x mb-2"></i>
+                        <p class="mb-0">يرجى إدخال الرقم التدريبي لعرض الجلسات</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-modern mb-4" id="instructionsCard" style="display: none;">
+            <div class="card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <i class="fas fa-file-alt"></i> التعليمات المنظمة للاختبار
+            </div>
+            <div class="card-body">
+                <div class="instructions-content">
+                    <div class="instruction-item">
+                        <i class="fas fa-map-marker-alt text-primary"></i>
+                        <strong>طريقة ومقر انعقاد الاختبار:</strong>
+                        <p>يُعقد الاختبار حضورياً في مقر الكلية داخل المعمل المخصص.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-clock text-primary"></i>
+                        <strong>المدة الزمنية:</strong>
+                        <p>تبلغ مدة الاختبار ساعة واحدة (60 دقيقة) فقط.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-calendar-check text-primary"></i>
+                        <strong>الالتزام بالمواعيد:</strong>
+                        <p>يُشترط الحضور قبل الموعد بعشر دقائق على الأقل.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-id-card text-primary"></i>
+                        <strong>إثبات الهوية:</strong>
+                        <p>يجب إحضار الهوية الوطنية أو إبرازها عبر تطبيق توكلنا.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-laptop text-primary"></i>
+                        <strong>التحقق التقني:</strong>
+                        <p>التأكد من صلاحية بيانات الدخول لمنصة تقني واستقرار الإنترنت.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-shield-alt text-primary"></i>
+                        <strong>النزاهة الأكاديمية:</strong>
+                        <p>يُمنع أي تعاون أو تبادل للإجابات بين المتدربين.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-ban text-danger"></i>
+                        <strong>المنع الدائم للمصادر الخارجية:</strong>
+                        <p>يُحظر استخدام الهواتف المحمولة أو أي مصادر خارجية.</p>
+                    </div>
+                    <div class="instruction-item">
+                        <i class="fas fa-paper-plane text-primary"></i>
+                        <strong>اكتمال الإجابات:</strong>
+                        <p>يقع على المتدرب مسؤولية التأكد من إرسال الاختبار نهائياً.</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle ms-2"></i>
+                    <strong>تنبيه:</strong> يُعد المتدرب متغيباً ومرصوداً له درجة الصفر في حال عدم الحضور دون عذر رسمي.
+                </div>
+                
+                <div class="form-check mt-3 p-3 bg-light rounded">
+                    <input class="form-check-input" type="checkbox" name="acknowledge_instructions" id="acknowledge_instructions" value="y" required>
+                    <label class="form-check-label fw-bold" for="acknowledge_instructions">
+                        ✅ أقر بأنني اطلعت على كافة تعليمات الاختبار *
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-modern mb-4" id="declarationCard" style="display: none;">
+            <div class="card-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <i class="fas fa-gavel"></i> الإقرار والتعهد
+            </div>
+            <div class="card-body">
+                <div class="declaration-box">
+                    <p class="declaration-text">
+                        أقر بأنني مسجل رسمياً في المقرر، وأتعهد بأنني أمتلك القدرة على الدخول لمنصة تقني، وأن البيانات صحيحة.
+                    </p>
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="declaration" id="declaration" value="y" required>
+                    <label class="form-check-label fw-bold" for="declaration">
+                        ✅ أوافق على الإقرار والتعهد *
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="submitBtnContainer" class="text-center" style="display: none;">
+            <button type="submit" class="btn btn-modern btn-lg px-5">
+                <i class="fas fa-check-circle ms-2"></i> تأكيد التسجيل
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal التنبيه الزمني -->
+<div class="modal fade" id="timeAlertModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle ms-2"></i> تنبيه</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-clock fa-3x text-danger mb-3"></i>
+                <h4 class="text-danger">لا يمكن التسجيل، فات وقت التسجيل في الجلسة.</h4>
+                <p class="text-muted">يجب التسجيل قبل 10 دقائق على الأقل من موعد الجلسة.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-modern" data-bs-dismiss="modal">فهمت</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.instructions-content { background: #f8fafc; border-radius: 10px; padding: 20px; }
+.instruction-item { background: white; border-right: 4px solid #2563eb; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+.instruction-item i { font-size: 1.3rem; margin-left: 10px; color: #2563eb; }
+.instruction-item strong { color: #1e293b; display: block; margin-bottom: 5px; }
+.auto-filled-field { background: #d1fae5 !important; border-color: #10b981 !important; cursor: not-allowed; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const traineeIdInput = document.getElementById('trainee_id');
+const fullNameInput = document.getElementById('full_name');
+const phoneInput = document.getElementById('phone');
+const emailInput = document.getElementById('email');
+const specializationInput = document.getElementById('specialization');
+const sessionsContainer = document.getElementById('sessionsContainer');
+const submitBtn = document.getElementById('submitBtnContainer');
+const declarationCard = document.getElementById('declarationCard');
+const instructionsCard = document.getElementById('instructionsCard');
+const traineeStatus = document.getElementById('trainee-status');
+
+let traineeVerified = false;
+let serverTimeOffset = 0;
+
+fetch('/api/server-time')
+    .then(r => r.json())
+    .then(data => {
+        const serverTime = new Date(data.server_time.replace(' ', 'T')).getTime();
+        serverTimeOffset = serverTime - Date.now();
+    })
+    .catch(err => console.warn('⚠️ تعذر جلب وقت الخادم'));
+
+function getServerNow() {
+    return new Date(Date.now() + serverTimeOffset);
+}
+
+function canRegisterInSession(sessionDateTimeStr) {
+    const sessionDateTime = new Date(sessionDateTimeStr);
+    const serverNow = getServerNow();
+    const diffMinutes = (sessionDateTime - serverNow) / (1000 * 60);
+    return diffMinutes >= 10;
+}
+
+function showTimeAlert() {
+    const modal = new bootstrap.Modal(document.getElementById('timeAlertModal'));
+    modal.show();
+}
+
+let debounceTimer;
+traineeIdInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    const traineeId = this.value.trim();
+    if (traineeId.length >= 6) {
+        debounceTimer = setTimeout(() => checkTrainee(traineeId), 500);
+    } else {
+        traineeStatus.innerHTML = '';
+        traineeVerified = false;
+        clearAutoFilledFields();
+    }
+});
+
+function checkTrainee(traineeId) {
+    traineeStatus.innerHTML = '<div class="text-muted"><i class="fas fa-spinner fa-spin"></i> جاري البحث...</div>';
+    
+    fetch(`/api/trainee-info?trainee_id=${traineeId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                traineeStatus.innerHTML = `<div class="alert alert-success py-2 px-3 mb-0"><i class="fas fa-check-circle"></i> ${data.message}</div>`;
+                fullNameInput.value = data.data.full_name;
+                fullNameInput.classList.add('auto-filled-field');
+                specializationInput.value = data.data.specialization;
+                specializationInput.classList.add('auto-filled-field');
+                if (data.data.phone) phoneInput.value = data.data.phone;
+                if (data.data.email) emailInput.value = data.data.email;
+                traineeVerified = true;
+                loadSessions();
+            } else {
+                traineeStatus.innerHTML = `<div class="alert alert-danger py-2 px-3 mb-0"><i class="fas fa-times-circle"></i> ${data.message}</div>`;
+                traineeVerified = false;
+                clearAutoFilledFields();
+            }
+        })
+        .catch(err => traineeStatus.innerHTML = '<div class="alert alert-danger py-2">خطأ في الاتصال</div>');
+}
+
+function clearAutoFilledFields() {
+    fullNameInput.value = '';
+    fullNameInput.classList.remove('auto-filled-field');
+    specializationInput.value = '';
+    specializationInput.classList.remove('auto-filled-field');
+    phoneInput.value = '';
+    emailInput.value = '';
+}
+
+function loadSessions() {
+    const specialization = specializationInput.value;
+    if (!specialization || !traineeVerified) return;
+    
+    sessionsContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
+    
+    fetch(`/api/sessions?specialization=${encodeURIComponent(specialization)}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.sessions.length === 0) {
+                sessionsContainer.innerHTML = `<div class="alert alert-warning text-center"><i class="fas fa-exclamation-triangle fa-2x mb-2"></i><p class="mb-0">لا توجد جلسات متاحة</p></div>`;
+                submitBtn.style.display = 'none';
+                declarationCard.style.display = 'none';
+                instructionsCard.style.display = 'none';
+                return;
+            }
+            
+            let html = '<div class="list-group">';
+            data.sessions.forEach(session => {
+                const sessionDateTime = `${session.session_date}T${session.session_time}`;
+                const canRegister = canRegisterInSession(sessionDateTime);
+                const serverNow = getServerNow();
+                const sessionDate = new Date(sessionDateTime);
+                const minutesLeft = Math.floor((sessionDate - serverNow) / (1000 * 60));
+                
+                let timeBadge = '';
+                let cardClass = '';
+                let disabledAttr = '';
+                
+                if (!canRegister) {
+                    timeBadge = `<span class="badge badge-danger"><i class="fas fa-lock"></i> انتهى التسجيل</span>`;
+                    cardClass = 'opacity-50';
+                    disabledAttr = 'disabled';
+                } else if (minutesLeft < 60) {
+                    timeBadge = `<span class="badge badge-warning"><i class="fas fa-clock"></i> ${minutesLeft} دقيقة</span>`;
+                } else if (minutesLeft < 1440) {
+                    timeBadge = `<span class="badge badge-info"><i class="fas fa-clock"></i> ${Math.floor(minutesLeft / 60)} ساعة</span>`;
+                } else {
+                    timeBadge = `<span class="badge badge-success"><i class="fas fa-clock"></i> ${Math.floor(minutesLeft / 1440)} يوم</span>`;
+                }
+                
+                html += `
+                    <label class="session-card list-group-item ${cardClass}">
+                        <div class="d-flex align-items-start">
+                            <input class="form-check-input me-3" type="radio" name="session_id" value="${session.id}" required ${disabledAttr}>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0">${session.course_name}</h5>
+                                    <div class="d-flex gap-2">
+                                        ${timeBadge}
+                                        <span class="badge badge-success">${session.available_seats} مقعد</span>
+                                    </div>
+                                </div>
+                                <div class="session-info">
+                                    <span class="badge badge-light"><i class="fas fa-calendar-day"></i> ${session.session_date}</span>
+                                    <span class="badge badge-light"><i class="fas fa-clock"></i> ${session.session_time}</span>
+                                    <span class="badge badge-light"><i class="fas fa-map-marker-alt"></i> ${session.location}</span>
+                                </div>
+                                <small class="text-muted d-block mt-2"><i class="fas fa-users"></i> ${session.current_count} / ${session.max_capacity}</small>
+                            </div>
+                        </div>
+                    </label>
+                `;
+            });
+            html += '</div>';
+            sessionsContainer.innerHTML = html;
+            
+            submitBtn.style.display = 'block';
+            declarationCard.style.display = 'block';
+            instructionsCard.style.display = 'block';
+            
+            document.querySelectorAll('.session-card input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('.session-card').forEach(c => c.classList.remove('selected'));
+                    if (!this.disabled) this.closest('.session-card').classList.add('selected');
+                });
+            });
+        });
+}
+
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    if (!traineeVerified) {
+        e.preventDefault();
+        alert('⚠️ يرجى إدخال رقم تدريبي صحيح');
+        return false;
+    }
+    if (!specializationInput.value) {
+        e.preventDefault();
+        alert('⚠️ لم يتم تحديد التخصص');
+        return false;
+    }
+    const selectedSession = document.querySelector('input[name="session_id"]:checked');
+    if (selectedSession && selectedSession.disabled) {
+        e.preventDefault();
+        showTimeAlert();
+        return false;
+    }
+    if (!document.getElementById('declaration').checked) {
+        e.preventDefault();
+        alert('⚠️ يجب الموافقة على الإقرار');
+        return false;
+    }
+    if (!document.getElementById('acknowledge_instructions').checked) {
+        e.preventDefault();
+        alert('⚠️ يجب الإقرار بالاطلاع على التعليمات');
+        return false;
+    }
+});
+
+setInterval(() => {
+    if (traineeVerified && specializationInput.value) loadSessions();
+}, 30000);
+</script>
+{% endblock %}

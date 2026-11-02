@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: 'Tahoma', Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden;">
+        <div style="background: #00634B; color: white; padding: 30px; text-align: center;">
+            <h1 style="margin: 0;">الكلية التقنية ببيشة</h1>
+            <p style="margin: 5px 0; opacity: 0.9;">BCT - Bisha Technical College</p>
+        </div>
+        
+        <div style="padding: 30px;">
+            <h2 style="color: #00634B; border-right: 4px solid #00634B; padding-right: 15px;">
+                ✅ تم تأكيد تسجيلك بنجاح
+            </h2>
+            
+            <p>مرحباً <strong>{{ trainee.full_name }}</strong>،</p>
+            <p>يسعدنا إعلامك بأنه تم تسجيلك بنجاح في اختبار مقرر <strong>مقدمة تطبيقات الحاسب</strong>.</p>
+            
+            <div style="background: #E8F3EE; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: #00634B; margin-top: 0;">📋 تفاصيل الجلسة:</h3>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="padding: 8px;"><strong>📅 التاريخ:</strong></td>
+                        <td>{{ session.session_date.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>⏰ الوقت:</strong></td>
+                        <td>{{ session.session_time.strftime('%H:%M') }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>🏢 رقم المعمل:</strong></td>
+                        <td><strong style="color: #00634B;">{{ session.location }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;"><strong>🔢 الرقم التدريبي:</strong></td>
+                        <td>{{ trainee.trainee_id }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div style="background: #fff3cd; border-right: 4px solid #ffc107; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                <p style="margin: 0;"><strong>⚠️ ملاحظة:</strong> يرجى الحضور قبل 15 دقيقة من موعد الاختبار وإحضار الهوية الرسمية.</p>
+            </div>
+            
+            <p>نتمنى لك التوفيق والنجاح.</p>
+        </div>
+        
+        <div style="background: #004D3A; color: white; padding: 20px; text-align: center;">
+            <p style="margin: 5px 0;">© 2026 BCT - جميع الحقوق محفوظة</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}التقارير{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <h1 class="page-title">
+        <i class="fas fa-file-alt ms-2"></i> تقارير الجلسات
+    </h1>
+
+    <div class="card card-tvtc">
+        <div class="card-header">
+            <i class="fas fa-list ms-2"></i> جميع الجلسات - اختر جلسة لاستعراض تقريرها
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-tvtc mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>المقرر</th>
+                            <th>التخصص</th>
+                            <th>التاريخ</th>
+                            <th>الوقت</th>
+                            <th>المعمل</th>
+                            <th>عدد المسجلين</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                        <tr>
+                            <td>{{ session.id }}</td>
+                            <td>{{ session.course_name }}</td>
+                            <td>{{ session.specialization }}</td>
+                            <td>{{ session.session_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ session.session_time.strftime('%H:%M') }}</td>
+                            <td>{{ session.location }}</td>
+                            <td>
+                                <span class="badge {% if session.is_full %}bg-danger{% else %}bg-tvtc-green{% endif %}">
+                                    {{ session.current_count }} / {{ session.max_capacity }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('admin_session_attendance', session_id=session.id) }}" 
+                                   class="btn btn-sm btn-outline-success" title="تسجيل الحضور">
+                                    <i class="fas fa-clipboard-check"></i>
+                                </a>
+                                <a href="{{ url_for('admin_report_print', session_id=session.id) }}" 
+                                   class="btn btn-sm btn-outline-primary" target="_blank" title="طباعة">
+                                    <i class="fas fa-print"></i>
+                                </a>
+                                <a href="{{ url_for('admin_report_csv', session_id=session.id) }}" 
+                                   class="btn btn-sm btn-outline-danger" title="تحميل CSV">
+                                    <i class="fas fa-file-csv"></i> CSV
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

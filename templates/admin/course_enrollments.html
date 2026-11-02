@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}إدارة المتدربين المسجلين بالمقررات{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h1 class="page-title mb-0">
+            <i class="fas fa-user-graduate ms-2"></i> المتدربون المسجلون بالمقررات
+        </h1>
+        <div>
+            <a href="{{ url_for('admin_enrollments_upload') }}" class="btn btn-tvtc">
+                <i class="fas fa-upload ms-2"></i> رفع بيانات جديدة
+            </a>
+        </div>
+    </div>
+
+    <!-- فلترة -->
+    <div class="card card-tvtc mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">المقرر</label>
+                    <select name="course" class="form-select">
+                        <option value="">-- الكل --</option>
+                        {% for value, label in courses %}
+                        <option value="{{ value }}" {% if current_course == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">التخصص</label>
+                    <select name="specialization" class="form-select">
+                        <option value="">-- الكل --</option>
+                        {% for value, label in specializations %}
+                        <option value="{{ value }}" {% if current_spec == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-tvtc w-100">
+                        <i class="fas fa-filter ms-2"></i> تطبيق الفلتر
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- الإحصائيات -->
+    <div class="alert alert-tvtc">
+        <i class="fas fa-info-circle ms-2"></i>
+        إجمالي المتدربين المسجلين في المقررات: <strong>{{ enrollments|length }}</strong>
+    </div>
+
+    <!-- الجدول -->
+    <div class="card card-tvtc">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-tvtc mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الرقم التدريبي</th>
+                            <th>الاسم الكامل</th>
+                            <th>المقرر</th>
+                            <th>التخصص</th>
+                            <th>رقم الجوال</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in enrollments %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><strong>{{ e.trainee_id }}</strong></td>
+                            <td>{{ e.full_name }}</td>
+                            <td><span class="badge bg-tvtc-green">{{ e.course_name }}</span></td>
+                            <td>{{ e.specialization }}</td>
+                            <td>{{ e.phone or '-' }}</td>
+                            <td>{{ e.enrolled_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin_enrollment_delete', enrollment_id=e.id) }}" 
+                                      style="display:inline;" 
+                                      onsubmit="return confirm('هل أنت متأكد من حذف هذا التسجيل؟');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                لا توجد بيانات مسجلة. قم برفع ملف CSV للبدء.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

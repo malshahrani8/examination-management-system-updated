@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}رصد الدرجات - {{ session.course_name }}{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h1 class="page-title mb-0">
+            <i class="fas fa-star"></i> رصد الدرجات
+        </h1>
+        <a href="{{ url_for('admin_sessions') }}" class="btn btn-modern-outline">
+            <i class="fas fa-arrow-right ms-2"></i> العودة للجلسات
+        </a>
+    </div>
+
+    <!-- معلومات الجلسة -->
+    <div class="alert alert-info mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <strong><i class="fas fa-book ms-1"></i> المقرر:</strong><br>
+                {{ session.course_name }}
+            </div>
+            <div class="col-md-3">
+                <strong><i class="fas fa-graduation-cap ms-1"></i> التخصص:</strong><br>
+                {{ session.specialization }}
+            </div>
+            <div class="col-md-3">
+                <strong><i class="fas fa-calendar-day ms-1"></i> التاريخ:</strong><br>
+                {{ session.session_date.strftime('%Y-%m-%d') }} - {{ session.session_time.strftime('%H:%M') }}
+            </div>
+            <div class="col-md-3">
+                <strong><i class="fas fa-map-marker-alt ms-1"></i> المعمل:</strong><br>
+                {{ session.location }}
+            </div>
+        </div>
+    </div>
+
+    <!-- الإحصائيات -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon"></i>
+                <p>إجمالي المسجلين</p>
+                <h3>{{ session.current_count }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-check-circle stat-icon" style="color: var(--success);"></i>
+                <p>ناجحون</p>
+                <h3 style="color: var(--success);">
+                    {{ session.trainees|selectattr('passed')|list|length }}
+                </h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-times-circle stat-icon" style="color: var(--danger);"></i>
+                <p>راسبون</p>
+                <h3 style="color: var(--danger);">
+                    {{ session.trainees|rejectattr('passed')|selectattr('latest_grade')|list|length }}
+                </h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-clock stat-icon" style="color: var(--warning);"></i>
+                <p>لم يرصد لهم</p>
+                <h3 style="color: var(--warning);">
+                    {{ session.trainees|rejectattr('latest_grade')|list|length }}
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج رصد الدرجات -->
+    <form method="POST">
+        <div class="card card-modern">
+            <div class="card-header">
+                <i class="fas fa-list"></i> قائمة المتدربين ورصد الدرجات
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="15%">الرقم التدريبي</th>
+                                <th width="20%">الاسم الكامل</th>
+                                <th width="15%">الدرجة (من 100)</th>
+                                <th width="10%">المحاولة</th>
+                                <th width="20%">ملاحظات</th>
+                                <th width="15%">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trainee in session.trainees %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><strong>{{ trainee.trainee_id }}</strong></td>
+                                <td>{{ trainee.full_name }}</td>
+                                <td>
+                                    {% if trainee.passed %}
+                                        <div class="alert alert-success py-1 px-2 mb-0">
+                                            <i class="fas fa-trophy"></i> اجتاز ({{ trainee.latest_grade.score }})
+                                        </div>
+                                    {% else %}
+                                        <input type="number" class="form-control" 
+                                               name="score_{{ trainee.id }}" 
+                                               min="0" max="100" step="0.5"
+                                               value="{{ trainee.latest_grade.score if trainee.latest_grade else '' }}"
+                                               placeholder="أدخل الدرجة">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if trainee.passed %}
+                                        <span class="badge badge-success">نجح</span>
+                                    {% else %}
+                                        <select name="attempt_{{ trainee.id }}" class="form-select form-select-sm">
+                                            <option value="1" {% if not trainee.latest_grade or trainee.latest_grade.attempt_number == 1 %}selected{% endif %}>1</option>
+                                            <option value="2" {% if trainee.latest_grade and trainee.latest_grade.attempt_number == 2 %}selected{% endif %}>2</option>
+                                            <option value="3" {% if trainee.latest_grade and trainee.latest_grade.attempt_number == 3 %}selected{% endif %}>3</option>
+                                        </select>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if trainee.passed %}
+                                        <span class="text-muted">-</span>
+                                    {% else %}
+                                        <input type="text" class="form-control form-control-sm" 
+                                               name="notes_{{ trainee.id }}"
+                                               value="{{ trainee.latest_grade.notes if trainee.latest_grade else '' }}"
+                                               placeholder="ملاحظات">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if trainee.passed %}
+                                        <span class="grade-display grade-pass">{{ trainee.latest_grade.score }}</span>
+                                    {% elif trainee.latest_grade %}
+                                        <span class="grade-display grade-fail">{{ trainee.latest_grade.score }}</span>
+                                    {% else %}
+                                        <span class="grade-display grade-pending">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                    لا يوجد متدربون مسجلون في هذه الجلسة
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% if session.trainees %}
+            <div class="card-footer bg-light">
+                <button type="submit" class="btn btn-modern">
+                    <i class="fas fa-save ms-2"></i> حفظ الدرجات
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

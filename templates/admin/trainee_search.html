@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block title %}استعلام عن متدرب{% endblock %}
+
+{% block content %}
+<div class="main-container fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h1 class="page-title mb-0">
+            <i class="fas fa-search"></i> استعلام عن بيانات متدرب
+        </h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-modern-outline">
+            <i class="fas fa-arrow-right ms-2"></i> العودة للوحة التحكم
+        </a>
+    </div>
+
+    <!-- نموذج البحث -->
+    <div class="card card-modern mb-4">
+        <div class="card-header">
+            <i class="fas fa-search"></i> البحث بالرقم التدريبي
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="row align-items-end">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-id-card text-primary ms-1"></i> الرقم التدريبي *
+                        </label>
+                        {{ form.trainee_id(class="form-control", placeholder="أدخل الرقم التدريبي (6-10 أرقام)", value=form.trainee_id.data or '') }}
+                        <small class="form-text">أدخل الرقم التدريبي للاستعلام عن جميع بيانات المتدرب</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form.submit(class="btn btn-modern w-100") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- رسالة الخطأ -->
+    {% if error_message %}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle ms-2"></i>
+        {{ error_message }}
+    </div>
+    {% endif %}
+
+    <!-- عرض نتائج البحث -->
+    {% if trainee_data %}
+    <!-- بطاقة معلومات المتدرب -->
+    <div class="card card-modern mb-4">
+        <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+            <i class="fas fa-user-graduate"></i> بيانات المتدرب الأساسية
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-id-card"></i> الرقم التدريبي:</span>
+                        <span class="info-value">{{ trainee_data.trainee_id }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-user"></i> الاسم الكامل:</span>
+                        <span class="info-value">{{ trainee_data.full_name }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-graduation-cap"></i> التخصص:</span>
+                        <span class="info-value">{{ trainee_data.specialization }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-book"></i> المقرر:</span>
+                        <span class="info-value">{{ trainee_data.course_name }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-mobile-alt"></i> رقم الجوال:</span>
+                        <span class="info-value">{{ trainee_data.phone }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-envelope"></i> البريد الإلكتروني:</span>
+                        <span class="info-value">{{ trainee_data.email }}</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-calendar-plus"></i> تاريخ التسجيل في المقرر:</span>
+                        <span class="info-value">{{ trainee_data.enrolled_at }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- إحصائيات سريعة -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-calendar-check stat-icon"></i>
+                <p>إجمالي الجلسات</p>
+                <h3>{{ trainee_data.total_sessions }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-check-circle stat-icon" style="color: #10b981;"></i>
+                <p>حضر</p>
+                <h3 style="color: #10b981;">{{ trainee_data.attended_count }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-times-circle stat-icon" style="color: #ef4444;"></i>
+                <p>غائب</p>
+                <h3 style="color: #ef4444;">{{ trainee_data.missed_count }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-star stat-icon" style="color: #f59e0b;"></i>
+                <p>متوسط الدرجات</p>
+                <h3 style="color: #f59e0b;">{{ '%.1f'|format(trainee_data.avg_score) if trainee_data.avg_score else '-' }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- حالة الاجتياز -->
+    {% if trainee_data.passed_any %}
+    <div class="alert alert-success mb-4">
+        <i class="fas fa-trophy ms-2"></i>
+        <strong>✅ المتدرب اجتاز الاختبار بنجاح</strong> في إحدى الجلسات المسجلة.
+    </div>
+    {% endif %}
+
+    <!-- جدول الجلسات المسجلة -->
+    <div class="card card-modern">
+        <div class="card-header">
+            <i class="fas fa-list"></i> الجلسات المسجلة وتفاصيلها
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>المقرر</th>
+                            <th>التخصص</th>
+                            <th>التاريخ</th>
+                            <th>الوقت</th>
+                            <th>المعمل</th>
+                            <th>المحاولة</th>
+                            <th>الحضور</th>
+                            <th>الدرجة</th>
+                            <th>الحالة</th>
+                            <th>تاريخ التسجيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions_data %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ session.course_name }}</td>
+                            <td>{{ session.specialization }}</td>
+                            <td>{{ session.session_date }}</td>
+                            <td>{{ session.session_time }}</td>
+                            <td>{{ session.location }}</td>
+                            <td>
+                                <span class="badge badge-info">{{ session.registration_order }}</span>
+                            </td>
+                            <td>
+                                {% if session.attendance_status == 'attended' %}
+                                    <span class="badge badge-success"><i class="fas fa-check"></i> حضر</span>
+                                {% elif session.attendance_status == 'missed' %}
+                                    <span class="badge badge-danger"><i class="fas fa-times"></i> غائب</span>
+                                {% else %}
+                                    <span class="badge badge-warning"><i class="fas fa-clock"></i> لم يحضر</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if session.grade is not none %}
+                                    <span class="grade-display {{ 'grade-pass' if session.passed else 'grade-fail' }}">
+                                        {{ session.grade }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if session.passed %}
+                                    <span class="badge badge-success"><i class="fas fa-trophy"></i> ناجح</span>
+                                {% elif session.grade is not none %}
+                                    <span class="badge badge-danger"><i class="fas fa-times"></i> راسب</span>
+                                {% else %}
+                                    <span class="badge badge-light">لم يرصد</span>
+                                {% endif %}
+                            </td>
+                            <td><small>{{ session.registered_at }}</small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ملاحظات الدرجات -->
+    {% set has_notes = sessions_data|selectattr('grade_notes')|list %}
+    {% if has_notes %}
+    <div class="card card-modern mt-4">
+        <div class="card-header">
+            <i class="fas fa-sticky-note"></i> ملاحظات الدرجات
+        </div>
+        <div class="card-body">
+            {% for session in sessions_data %}
+                {% if session.grade_notes %}
+                <div class="mb-2">
+                    <strong>المحاولة {{ session.attempt_number }}:</strong>
+                    <span class="text-muted">{{ session.grade_notes }}</span>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.info-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-right: 3px solid #2563eb;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.grade-display {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 0 1rem;
+}
+
+.grade-pass {
+    background: #d1fae5;
+    color: #10b981;
+    border: 2px solid #10b981;
+}
+
+.grade-fail {
+    background: #fee2e2;
+    color: #ef4444;
+    border: 2px solid #ef4444;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة التحكم{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <h1 class="page-title">
+        <i class="fas fa-tachometer-alt ms-2"></i> لوحة التحكم
+    </h1>
+
+    <!-- الإحصائيات -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon"></i>
+                <p>إجمالي المتدربين</p>
+                <h3>{{ total_trainees }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="fas fa-calendar-alt stat-icon"></i>
+                <p>إجمالي الجلسات</p>
+                <h3>{{ total_sessions }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="fas fa-ban stat-icon"></i>
+                <p>جلسات مكتملة</p>
+                <h3>{{ full_sessions }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- الإجراءات السريعة -->
+    <div class="card card-tvtc mt-4">
+        <div class="card-header">
+            <i class="fas fa-bolt ms-2"></i> إجراءات سريعة
+        </div>
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin_session_new') }}" class="btn btn-tvtc w-100">
+                        <i class="fas fa-plus ms-2"></i> إضافة جلسة جديدة
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin_sessions') }}" class="btn btn-tvtc-outline w-100">
+                        <i class="fas fa-list ms-2"></i> إدارة الجلسات
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin_reports') }}" class="btn btn-tvtc-outline w-100">
+                        <i class="fas fa-file-alt ms-2"></i> التقارير
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نظرة عامة على الجلسات -->
+    <div class="card card-tvtc mt-4">
+        <div class="card-header">
+            <i class="fas fa-list ms-2"></i> نظرة عامة على الجلسات
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-tvtc mb-0">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الوقت</th>
+                            <th>المعمل</th>
+                            <th>السعة</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                        <tr>
+                            <td>{{ session.session_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ session.session_time.strftime('%H:%M') }}</td>
+                            <td>{{ session.location }}</td>
+                            <td>{{ session.current_count }} / {{ session.max_capacity }}</td>
+                            <td>{{ session.status_badge | safe }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
